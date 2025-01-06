@@ -1,0 +1,63 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: ms-postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: a1st
+      POSTGRES_PASSWORD: a1st
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+        - postgres:/var/lib/postgresql/data/pgdata
+    networks:
+        - microservices-network
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo:latest
+    container_name: ms-mongo
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: a1st
+      MONGO_INITDB_ROOT_PASSWORD: a1st
+    volumes:
+      - mongo:/data
+    networks:
+      - microservices-network
+    restart: unless-stopped
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: ms-mongo-express
+    restart: unless-stopped
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: a1st
+      ME_CONFIG_MONGODB_ADMINPASSWORD: a1st
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_BASICAUTH_USERNAME: a1st
+      ME_CONFIG_BASICAUTH_PASSWORD: a1st
+    networks:
+        - microservices-network
+
+
+  mail-dev:
+    image: maildev/maildev
+    container_name: ms-mail-dev
+    ports:
+      - 1080:1080
+      - 1025:1025
+
+
+networks:
+  microservices-network:
+    driver: bridge
+
+
+volumes:
+  postgres:
+  pgadmin:
+  mongo:
