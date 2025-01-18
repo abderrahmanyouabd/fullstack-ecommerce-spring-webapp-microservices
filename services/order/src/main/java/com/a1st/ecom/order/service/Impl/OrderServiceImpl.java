@@ -1,5 +1,6 @@
 package com.a1st.ecom.order.service.Impl;
 
+import com.a1st.ecom.order.clients.PaymentClient;
 import com.a1st.ecom.order.clients.ProductClient;
 import com.a1st.ecom.order.clients.UserClient;
 import com.a1st.ecom.order.exceptions.BusinessException;
@@ -8,6 +9,7 @@ import com.a1st.ecom.order.kafka.OrderConfirmation;
 import com.a1st.ecom.order.kafka.OrderProducer;
 import com.a1st.ecom.order.repository.OrderRepository;
 import com.a1st.ecom.order.request.OrderRequest;
+import com.a1st.ecom.order.request.PaymentRequest;
 import com.a1st.ecom.order.request.PurchaseRequest;
 import com.a1st.ecom.order.response.OrderResponse;
 import com.a1st.ecom.order.response.PurchaseResponse;
@@ -34,6 +36,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
     private final OrderLineService orderLineService;
     private final OrderProducer orderProducer;
+    private final PaymentClient paymentClient;
 
     @Override
     public Long createOrder(OrderRequest orderRequest) {
@@ -52,7 +55,18 @@ public class OrderServiceImpl implements OrderService {
         for (PurchaseRequest purchaseRequest : orderRequest.desiredProducts()) {
             orderLineService.createOrderLine(new OrderLineRequest(null, order.getId(), purchaseRequest.productId(), purchaseRequest.quantity()));
         }
-        // start payment process (TODO)
+        // start payment process
+        // send payment request to payment service payment-ms
+        paymentClient.requestOrderPayment(
+                new PaymentRequest(
+                        orderRequest.amount(),
+                        orderRequest.paymentMethod(),
+                        order.getId(),
+                        order.getReference(),
+                        user
+                )
+        );
+
 
         // send order confirmation to notification service notification-ms
         orderProducer.sendOrderConfirmation(
