@@ -1,6 +1,9 @@
 package com.a1st.ecom.orderLine.service;
 
 import com.a1st.ecom.orderLine.request.OrderLineRequest;
+import com.a1st.ecom.orderLine.response.OrderLineResponse;
+
+import java.util.List;
 
 /**
  * @author: Abderrahman Youabd aka: A1ST
@@ -8,4 +11,5 @@ import com.a1st.ecom.orderLine.request.OrderLineRequest;
  */
 public interface OrderLineService {
     void createOrderLine(OrderLineRequest orderLineRequest);
+    List<OrderLineResponse> getOrderLinesByOrderId(Long orderId);
 }
