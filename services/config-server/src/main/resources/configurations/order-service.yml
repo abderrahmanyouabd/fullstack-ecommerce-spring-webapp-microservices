@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/orders_db
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+server:
+  port: 8070
+
+application:
+  config:
+    user-url: http://localhost:8222/api/v1/users
+    product-url: http://localhost:8222/api/v1/products
+    # TODO: not yet implemented
+    payment-url: http://localhost:8222/api/v1/payments
