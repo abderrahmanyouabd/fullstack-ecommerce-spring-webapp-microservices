@@ -1,18 +1,18 @@
 services:
-  postgres:
-    image: postgres
-    container_name: ms-postgres
-    ports:
-      - 5432:5432
-    environment:
-      POSTGRES_USER: a1st
-      POSTGRES_PASSWORD: a1st
-      PGDATA: /var/lib/postgresql/data/pgdata
-    volumes:
-        - postgres:/var/lib/postgresql/data/pgdata
-    networks:
-        - microservices-network
-    restart: unless-stopped
+#  postgres:
+#    image: postgres
+#    container_name: ms-postgres
+#    ports:
+#      - 5432:5432
+#    environment:
+#      POSTGRES_USER: a1st
+#      POSTGRES_PASSWORD: a1st
+#      PGDATA: /var/lib/postgresql/data/pgdata
+#    volumes:
+#        - postgres:/var/lib/postgresql/data/pgdata
+#    networks:
+#        - microservices-network
+#    restart: unless-stopped
 
   mongodb:
     image: mongo:latest
@@ -42,6 +42,34 @@ services:
       ME_CONFIG_BASICAUTH_PASSWORD: a1st
     networks:
         - microservices-network
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - 22181:2181
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - microservices-network
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: ms-kafka
+    ports:
+      - 9092:9092
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+    networks:
+      - microservices-network
 
 
   mail-dev:
