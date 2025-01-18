@@ -1,5 +1,6 @@
-package com.a1st.ecom.product.model;
+package com.a1st.ecom.category.model;
 
+import com.a1st.ecom.product.model.Product;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
