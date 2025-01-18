@@ -1,25 +1,24 @@
 package com.a1st.ecom.order.service.Impl;
 
 import com.a1st.ecom.order.clients.ProductClient;
+import com.a1st.ecom.order.clients.UserClient;
 import com.a1st.ecom.order.exceptions.BusinessException;
+import com.a1st.ecom.order.exceptions.OrderNotFoundException;
 import com.a1st.ecom.order.kafka.OrderConfirmation;
 import com.a1st.ecom.order.kafka.OrderProducer;
-import com.a1st.ecom.order.model.Order;
 import com.a1st.ecom.order.repository.OrderRepository;
 import com.a1st.ecom.order.request.OrderRequest;
 import com.a1st.ecom.order.request.PurchaseRequest;
+import com.a1st.ecom.order.response.OrderResponse;
 import com.a1st.ecom.order.response.PurchaseResponse;
 import com.a1st.ecom.order.service.OrderService;
-import com.a1st.ecom.order.clients.UserClient;
 import com.a1st.ecom.order.utils.OrderMapper;
-import com.a1st.ecom.orderLine.model.OrderLine;
 import com.a1st.ecom.orderLine.request.OrderLineRequest;
 import com.a1st.ecom.orderLine.service.OrderLineService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author: Abderrahman Youabd aka: A1ST
@@ -66,5 +65,19 @@ public class OrderServiceImpl implements OrderService {
                 )
         );
         return order.getId();
+    }
+
+    @Override
+    public List<OrderResponse> findAllOrders() {
+        return orderRepository.findAll().stream()
+                .map(orderMapper::toOrderResponse)
+                .toList();
+    }
+
+    @Override
+    public OrderResponse findOrderById(Long orderId) {
+        return orderRepository.findById(orderId)
+                .map(orderMapper::toOrderResponse)
+                .orElseThrow(() -> new OrderNotFoundException(String.format("Order with id %s not found", orderId)));
     }
 }

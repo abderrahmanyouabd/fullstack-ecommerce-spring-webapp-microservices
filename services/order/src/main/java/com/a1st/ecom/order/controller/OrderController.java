@@ -2,13 +2,13 @@ package com.a1st.ecom.order.controller;
 
 
 import com.a1st.ecom.order.request.OrderRequest;
+import com.a1st.ecom.order.response.OrderResponse;
 import com.a1st.ecom.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 /**
@@ -25,5 +25,15 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<Long> createOrder(@RequestBody OrderRequest orderRequest) {
         return ResponseEntity.ok(orderService.createOrder(orderRequest));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<OrderResponse>> findAllOrders() {
+        return ResponseEntity.ok(orderService.findAllOrders());
+    }
+
+    @GetMapping("/{order-id}")
+    public ResponseEntity<OrderResponse> findOrderById(@PathVariable("order-id") Long orderId) {
+        return ResponseEntity.ok(orderService.findOrderById(orderId));
     }
 }

@@ -2,12 +2,8 @@ package com.a1st.ecom.order.utils;
 
 import com.a1st.ecom.order.model.Order;
 import com.a1st.ecom.order.request.OrderRequest;
-import com.a1st.ecom.order.response.PurchaseResponse;
-import com.a1st.ecom.order.response.UserResponse;
+import com.a1st.ecom.order.response.OrderResponse;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * @author: Abderrahman Youabd aka: A1ST
@@ -24,5 +20,15 @@ public class OrderMapper {
                 .userId(orderRequest.userId())
                 .paymentMethod(orderRequest.paymentMethod())
                 .build();
+    }
+
+    public OrderResponse toOrderResponse(Order order) {
+        return new OrderResponse(
+                order.getId(),
+                order.getReference(),
+                order.getTotalAmount(),
+                order.getPaymentMethod(),
+                order.getUserId()
+        );
     }
 }
